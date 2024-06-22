@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hank Moody Response Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 8px;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            width: 60%;
+        }
+        .form-container form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .form-container img {
+            max-width: 200px;
+            max-height: 200px;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+        .uploaded-images {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .uploaded-images a {
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .fullsize-image {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            width: 90%;
+            height: 90%;
+            top: 5%;
+            left: 5%;
+            object-fit: contain;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+        .fullsize-image img {
+            width: 100%;
+            height: 100%;
+        }
+        .fullsize-image:target {
+            display: block;
+        }
+        .fullsize-image:target:before {
+            content: '×';
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 2rem;
+            color: #fff;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        .response-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 35%;
+        }
+        .response-container img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+        .bubble {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: left;
+            margin-top: 10px;
+            width: 100%;
+            word-wrap: break-word;
+            min-height: 50px;
+        }
+        .hidden {
+            display: none;
+        }
+        .typewriter-text {
+            display: inline-block;
+            white-space: pre-wrap;
+            overflow: hidden;
+            border-right: 0.15em solid orange; /* Adjust caret color */
+            animation: typing 2s steps(40, end), blink-caret .75s step-end infinite;
+        }
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+        @keyframes blink-caret {
+            from, to { border-right-color: transparent; }
+            50% { border-right-color: black; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h1>Hank Moody Response Generator</h1>
+            <h2>Upload up to 5 images of a conversation and get a Hank Moody response</h2>
+            <form method="post" enctype="multipart/form-data">
+                <input type="file" name="images" accept="image/*" multiple>
+                <button type="submit" id="generate-btn">Generate Response</button>
+                {% if image_urls %}
+                {% for image_url in image_urls %}
+                <input type="hidden" name="existing_image_urls" value="{{ image_url }}">
+                {% endfor %}
+                {% endif %}
+            </form>
+            {% if image_urls %}
+            <div class="uploaded-images">
+                {% for image_url in image_urls %}
+                <a href="#fullsize-{{ loop.index }}">
+                    <img src="{{ image_url }}" alt="Uploaded Conversation {{ loop.index }}" class="uploaded-image">
+                </a>
+                <div id="fullsize-{{ loop.index }}" class="fullsize-image">
+                    <a href="#"></a>
+                    <img src="{{ image_url }}" alt="Full-size Uploaded Conversation {{ loop.index }}">
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% if response %}
+        <div class="response-container">
+            <img id="hank-image" src="{{ url_for('static', filename='hank-moody.jpg') }}" alt="Hank Moody">
+            <div id="output" class="bubble">
+                <p id="response-text" class="typewriter-text">{{ response }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const generateBtn = document.getElementById('generate-btn');
+            if ("{{ response }}") {
+                generateBtn.textContent = 'New Response';
+            }
+        });
+    </script>
+</body>
+</html>
