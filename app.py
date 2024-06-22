@@ -8,6 +8,8 @@ app = Flask(__name__)
 
 # Ensure you have Tesseract installed and its path is configured correctly
 # pytesseract.pytesseract.tesseract_cmd = r'path_to_tesseract_executable'
+pytesseract.pytesseract.tesseract_cmd = '/app/.apt/usr/bin/tesseract'
+
 
 # Read OpenAI API key from environment variable
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
